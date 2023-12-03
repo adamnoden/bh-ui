@@ -1,5 +1,6 @@
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { formatEthAddress } from "../../utils";
 
 export const Profile = () => {
   const { address, isConnected } = useAccount();
@@ -9,14 +10,13 @@ export const Profile = () => {
   });
   const { disconnect } = useDisconnect();
 
-  if (isConnected)
+  if (isConnected && address)
     return (
-      <>
-        <div>Connected to {address}</div>
-        <div>
-          <button onClick={() => disconnect()}>Disconnect</button>
-        </div>
-      </>
+      <div>
+        Connected to {formatEthAddress(address)}
+        <br />
+        <button onClick={() => disconnect()}>Disconnect</button>
+      </div>
     );
   return <button onClick={() => connect()}>Connect Wallet</button>;
 };

@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { readContract } from "@wagmi/core";
-import { deserialize, useAccount, useContractWrite } from "wagmi";
+import {
+  deserialize,
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
 import abiJson from "../../abi/game-abi.json";
 
 const PlayButton: React.FC<{ ticketPrice: string; rawTicketPrice: bigint }> = ({
@@ -9,30 +14,30 @@ const PlayButton: React.FC<{ ticketPrice: string; rawTicketPrice: bigint }> = ({
 }) => {
   const { address } = useAccount();
 
+  const { config } = usePrepareContractWrite({
+    address: import.meta.env.VITE_CONTRACT_ADDRESS,
+    abi: abiJson.abi,
+    functionName: "play",
+    value: rawTicketPrice,
+  });
+
   const { data, isLoading, isSuccess, write, error, isError } =
-    useContractWrite({
-      address: import.meta.env.VITE_CONTRACT_ADDRESS,
-      abi: abiJson.abi,
-      functionName: "play",
-      value: rawTicketPrice,
-    });
+    useContractWrite(config);
   if (!address) {
     return null;
   }
 
   const handleClick = () => {
-    write();
+    write && write();
   };
 
   return (
     <div>
-      {isSuccess ? `Successful bid. Tx: ${data?.hash}` : ""}
-      <br />
       <button disabled={isLoading || !ticketPrice} onClick={handleClick}>
         Play (costs {ticketPrice ?? ""} wei)
       </button>
       <br />
-
+      {isSuccess ? `Successful bid. Tx: ${data?.hash}` : ""}
       {isError ? error?.message : ""}
     </div>
   );

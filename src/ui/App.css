@@ -1,8 +1,13 @@
 body {
     color: white;
-    font-size: 18px;
-    background: #323232
+    font-size: 16px;
+    background: #1a1616;
+    font-family: 'Courier New', Courier, monospace;
 }
 div {
-    margin: 10px
+    margin: 20px
+}
+button {
+    padding: 4px 12px;
+    margin-top: 10px;
 }

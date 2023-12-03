@@ -1,11 +1,12 @@
 import { readContract } from "@wagmi/core";
 import abiJson from "../../abi/game-abi.json";
-import { deserialize, useAccount } from "wagmi";
+import { deserialize, useAccount, Address } from "wagmi";
 import { useEffect, useState } from "react";
+import { formatEthAddress } from "../../utils";
 
 export const GameInfo = () => {
-  const [potSize, setPotSize] = useState("Loading...");
-  const [leader, setLeader] = useState("Loading...");
+  const [potSize, setPotSize] = useState<string | undefined>();
+  const [leader, setLeader] = useState<Address | undefined>();
   const { address } = useAccount();
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export const GameInfo = () => {
         functionName: "currentLeader",
       });
 
-      setLeader(rawLeader as unknown as string);
+      setLeader(rawLeader as Address);
     })();
   }, []);
 
@@ -32,10 +33,12 @@ export const GameInfo = () => {
     return null;
   }
 
+  const leaderDisplay = leader ? formatEthAddress(leader) : "Loading...";
+
   return (
     <>
-      <div>Pot size: {potSize}</div>
-      <div>Leader: {leader}</div>
+      <div>Pot size: {potSize ?? "Loading..."}</div>
+      <div>Leader: {leaderDisplay}</div>
     </>
   );
 };
